@@ -1,0 +1,91 @@
+{% extends "autoquerytemplate.html" %}
+{% block conteudo %}
+
+<form class="row g-3" action="{{ url_for('criar_tarefa') }}" method="post" enctype="multipart/form-data" >
+ 
+  <div class="col-md-3">
+    <label for="exampleFormControlInput1" class="form-label">Solicitante</label>
+    <input type="text" class="form-control" name = "solicitante" id = "solicitante" placeholder="Nome do solicitante" required>
+   </div>
+   <div class="mb-3">
+    <label for="exampleFormControlInput1" class="form-label">Titulo da solicitação</label>
+    <input type="text" class="form-control" name = "titulo" id = "titulo" placeholder="Ex: Delete na Biota Matriz" required>
+   </div>
+
+   <div class="mb-3">
+    <label for="exampleFormControlTextarea1" class="form-label">Solicitação</label>
+    <textarea class="form-control" id="descricao" name="descricao" placeholder= "Insira informações adicionais para contextualizar a solicitação" rows="3"></textarea>
+  </div>
+  <div class="col-md-5">
+    <label for="formFile" class="form-label">Selecione um arquivo</label>
+    <input class="form-control" type="file" id='file' name = "file" multiple>
+ 
+  </div>
+
+ 
+  <div class="col-12">
+    <button type="submit" class="btn btn-primary">Enviar solicitação</button>
+  </div>
+</form>
+ 
+{% for card in cards %}
+  <div class="card" style="width: 18rem; display: inline-block;">
+    <div class="card-body">
+      <h5 class="card-title">{{ card['name'] }}</h5>
+      <p class="card-text">{{ card['desc'] }}</p>
+      <form action="{{ url_for('deletar_tarefa', id=card['id']) }}" method="post">
+        <button type="submit" class="btn btn-danger">Deletar solicitação</button>
+      </form>
+    </div>
+  </div>
+
+
+
+
+   
+{% endfor %}
+<script>
+var inputFiles = [];
+
+function newInput(input) {
+  var filesStr = "";
+
+  for (let i = 0; i < input.files.length; i++) {
+    inputFiles.push(input.files[i]);
+    filesStr += "<li>" + input.files[i].name + "<button onclick='removeLi(this)'>Remover</button>" + "</li>";
+  }
+
+  document.getElementById("file-input").value = "";
+
+  document.getElementById("dp-files").innerHTML += filesStr;
+}
+
+function removeLi(e) {
+  inputFiles = inputFiles.filter(function(file) {
+    return file.name !== e.parentNode.innerHTML.split("<button>")[0];
+  })
+  e.parentNode.parentNode.removeChild(e.parentNode);
+}
+<script>
+
+
+<script>
+  var TOKEN = "";
+var KEY = "";
+var CARD = "";
+
+function upload() {
+  var formData = new FormData();
+
+  formData.append("token", TOKEN);
+  formData.append("key", KEY);
+
+  // HTML file input, chosen by user
+  formData.append("file", document.getElementById('chooser').files[0]);
+
+  var request = new XMLHttpRequest();
+  request.open("POST", "https://api.trello.com/1/cards/" + CARD + "/attachments");
+  request.send(formData);
+}
+</script>  
+{% endblock %}

@@ -1,0 +1,34 @@
+
+--None
+--##
+
+--NFSE--
+
+SELECT 
+  nfsix.CodigoVerificacao 'Codigo de Verificacao'
+, nfsix.NumeroNotaFiscal 'N° Nota Fiscal'
+, FORMAT(CONVERT(BIGINT,pnfsix.Cnpj),'00\.000\.000\/0000\-00') 'CNPJ Prestador'
+, ISNULL(FORMAT(CONVERT(BIGINT,tnfsix.Cnpj),'00\.000\.000\/0000\-00'),FORMAT(Convert(bigint,tnfsix.Cpf),'000\.000\.000\-00')) 'CNPJ/CPF Tomador'
+, FORMAT(nfsix.DataEmissao, 'dd/MM/yyyy') 'Data Emissao'
+, nfsix.CodigoServico
+, nfsix.DescricaoServico
+, FORMAT(ISNULL(nfsvix.ValorLiquidoNfse,0),'c','pt-br') 'Valor Liquido NFS-e'
+, FORMAT(ISNULL(nfsvix.ValorServicos,0),'c','pt-br') 'Valor Servicos'
+, FORMAT(ISNULL(nfsvix.ValorIr,0),'c','pt-br') 'Valor IR'
+, FORMAT(ISNULL(nfsvix.ValorCsll,0),'c','pt-br') 'Valor CSLL'
+, FORMAT(ISNULL(nfsvix.ValorPis,0),'c','pt-br') 'Valor PIS'
+, FORMAT(ISNULL(nfsvix.ValorCofins,0),'c','pt-br') 'Valor Cofins'
+, CASE WHEN nfsix.Cancelada=1 THEN 'Sim' ELSE 'Nao' END AS 'Cancelada?' 
+FROM NotasFiscaisServicoImportacaoXml nfsix
+JOIN Empresas e ON nfsix.EmpresaId = e.EmpresaId
+JOIN PrestadoresNotaFiscalServicoImportacaoXml pnfsix ON nfsix.PrestadorNotaFiscalServicoImportacaoXmlId = pnfsix.PrestadorNotaFiscalServicoImportacaoXmlId
+LEFT JOIN NotasFiscaisServicoValorImportacaoXml nfsvix ON nfsix.NotaFiscalServicoImportacaoXmlId = nfsvix.NotaFiscalServicoValorImportacaoXmlId
+LEFT JOIN TomadoresNotaFiscalServicoImportacaoXml tnfsix ON nfsix.TomadorNotaFiscalServicoImportacaoXmlId = tnfsix.TomadorNotaFiscalServicoImportacaoXmlId
+WHERE (e.cnpj = '{empresa}' OR e.cnpj like '%{empresa}%')
+AND nfsix.DataEmissao BETWEEN '{datainicio}' AND '{datafim}'
+AND e.Cnpj = pnfsix.Cnpj
+ORDER BY [CNPJ Prestador], nfsix.DataEmissao
+
+--##
+
+--None

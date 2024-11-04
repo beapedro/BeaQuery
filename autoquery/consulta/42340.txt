@@ -1,0 +1,199 @@
+--None
+
+--##
+
+--1010--
+SELECT '1010' AS 'Registro', e.Razaosocial as Empresa,  FORMAT(CONVERT(bigint,e.Cnpj),'00\.000\.000\/0000\-00')Estabelecimento, e.APELIDO, FORMAT(R0000.DataInicial, 'MM/yyyy') AS 'Competencia', sfr.IndicadorExportacao, sfr.IndicadorCredFiscalIcms, sfr.IndicadorCombustivel, sfr.IndicadorUsina, sfr.IndicadorVA, sfr.IndicadorEnergElet, sfr.IndicadorPagamentoEletr, sfr.IndicadorDocsFiscais, sfr.IndicadorTranspAereo, sfr.IndicadorGIAF1, sfr.IndicadorGIAF3, sfr.IndicadorGIAF4, sfr.IndicadorRestRessarcComplIcms 
+FROM SpedFiscalRegistros1010 sfr
+JOIN SpedFiscalRegistros0000 R0000 ON sfr.SpedFiscalRegistro1010Id = R0000.SpedFiscalRegistro0000Id
+JOIN Empresas e on e.empresaid = R0000.empresaId
+WHERE  (e.cnpj = '{empresa}' OR e.cnpj like '%{empresa}%')  AND R0000.DataInicial BETWEEN '{datainicio}' AND '{datafim}'
+ORDER BY R0000.DataInicial;
+
+--M100--
+SELECT 'M100' AS 'Registro', FORMAT(R00001.DataInicial, 'MM/yyyy') AS 'Competencia', dctcsc.Descricao AS 'Tipo Credito', dicosc.Descricao AS 'Indicador Credito Oriundo', scrm.ValorBaseCalculoPis, scrm.AliquotaPis, scrm.QuantidadeBaseCalculoPis, scrm.AliquotaQuantidadePis, scrm.ValorCredito, scrm.ValorAjusteAcrescimo, scrm.ValorAjusteReducao, scrm.ValorCreditoDiferido, scrm.ValorCreditoDisponivel, scrm.ValorCreditoDisponivelDescontado, scrm.SaldoCredito 
+FROM SpedContribuicoesRegistrosM100 scrm
+JOIN DefCodigoTipoCreditoSpedContribuicoes dctcsc ON scrm.CodigoTipoCreditoSpedContribuicoesId = dctcsc.CodigoTipoCreditoSpedContribuicoesId
+JOIN DefIndicadorCreditoOriundoSpedContribuicoes dicosc ON scrm.IndicadorCreditoOriundoSpedContribuicoesId = dicosc.IndicadorCreditoOriundoSpedContribuicoesId
+JOIN SpedContribuicoesRegistros0000 R00001 ON scrm.SpedContribuicoesRegistro0000Id = R00001.SpedContribuicoesRegistro0000Id
+JOIN Empresas e on e.empresaid = R00001.empresaId
+WHERE  (e.cnpj = '{empresa}' OR e.cnpj like '%{empresa}%')  AND R00001.DataInicial BETWEEN '{datainicio}' AND '{datafim}'
+ORDER BY R00001.DataInicial;
+
+--M105--
+SELECT 'M105' AS 'Registro', FORMAT(R00001.DataInicial, 'MM/yyyy') AS 'Competencia', dnbccsc.Descricao AS 'Nat. BC', M105.CodigoSituacaoTributariaReferenteCreditoPis, M105.ValorTotalBaseCalculoEscrituradaDocumentosOperacoes, M105.ParcelaValorTotalBaseCalculoInformada, M105.ValorTotalBaseCalculoCreditoVinculadaReceitasIncidencia, M105.ValorBaseCalculoCreditoVinculadaTipoCreditoEscriturado, M105.QuantidadeTotalBaseCalculoCreditoApuradoEmUnidadeMedidaProduto, M105.ParcelaBaseCalculoCreditoQuantidade, M105.DescricaoDoCredito 
+FROM SpedContribuicoesRegistrosM105 M105
+JOIN DefNaturezaBaseCalculoCreditoSpedContribuicoes dnbccsc ON M105.NaturezaBaseCalculoCreditoSpedContribuicoesId = dnbccsc.NaturezaBaseCalculoCreditoSpedContribuicoesId
+JOIN SpedContribuicoesRegistrosM100 scrm ON M105.SpedContribuicoesRegistroM100Id = scrm.SpedContribuicoesRegistroM100Id
+JOIN SpedContribuicoesRegistros0000 R00001 ON scrm.SpedContribuicoesRegistro0000Id = R00001.SpedContribuicoesRegistro0000Id
+JOIN Empresas e on e.empresaid = R00001.empresaId
+WHERE  (e.cnpj = '{empresa}' OR e.cnpj like '%{empresa}%')  AND R00001.DataInicial BETWEEN '{datainicio}' AND '{datafim}'
+
+ORDER BY R00001.DataInicial;
+
+--M110--
+SELECT 'M110' AS 'Registro', FORMAT(R00001.DataInicial, 'MM/yyyy') AS 'Competencia', ditasc.Descricao AS 'Indic. Ajuste', dcacc.Descricao AS 'Codigo Ajuste', scrm.DataReferencia, scrm.ValorAjuste, scrm.NumeroDocumento, scrm.DescricaoAjuste 
+FROM SpedContribuicoesRegistrosM110 scrm
+JOIN DefIndicadorTipoAjusteSpedContribuicoes ditasc ON scrm.IndicadorTipoAjusteSpedContribuicoesId = ditasc.IndicadorTipoAjusteSpedContribuicoesId
+JOIN DefCodigoAjustesContribuicaoCreditos dcacc ON scrm.CodigoAjustesContribuicaoCreditosId = dcacc.CodigoAjustesContribuicaoCreditosId
+JOIN SpedContribuicoesRegistrosM100 scrm1 ON scrm.SpedContribuicoesRegistroM100Id = scrm1.SpedContribuicoesRegistroM100Id
+JOIN SpedContribuicoesRegistros0000 R00001 ON scrm1.SpedContribuicoesRegistro0000Id = R00001.SpedContribuicoesRegistro0000Id
+JOIN Empresas e on e.empresaid = R00001.empresaId
+WHERE  (e.cnpj = '{empresa}' OR e.cnpj like '%{empresa}%')  AND R00001.DataInicial BETWEEN '{datainicio}' AND '{datafim}'
+ORDER BY R00001.DataInicial;
+
+--M115--
+SELECT 'M115' AS 'Registro', FORMAT(R00001.DataInicial, 'MM/yyyy') AS 'Competencia', dcstp.Codigo AS 'Cód. Sit. Trib.', scrm.DetalhamentoValorAjuste, scrm.DetalhamentoBaseCalculo, scrm.DetalhamentoAliquota, scrm.DataOperacao, scrm.DescricaoOperacao, scrm.CodigoConta, scrm.InformacaoComplementar 
+FROM SpedContribuicoesRegistrosM115 scrm
+JOIN DefCodigoSituacaoTributariaPis dcstp ON scrm.CodigoSituacaoTributariaPisId = dcstp.CodigoSituacaoTributariaPisId
+JOIN SpedContribuicoesRegistrosM110 scrm1 ON scrm.SpedContribuicoesRegistroM110Id = scrm1.SpedContribuicoesRegistroM110Id
+JOIN SpedContribuicoesRegistrosM100 scrm2 ON scrm1.SpedContribuicoesRegistroM100Id = scrm2.SpedContribuicoesRegistroM100Id
+JOIN SpedContribuicoesRegistros0000 R00001 ON scrm2.SpedContribuicoesRegistro0000Id = R00001.SpedContribuicoesRegistro0000Id
+JOIN Empresas e on e.empresaid = R00001.empresaId
+WHERE  (e.cnpj = '{empresa}' OR e.cnpj like '%{empresa}%')  AND R00001.DataInicial BETWEEN '{datainicio}' AND '{datafim}'
+ORDER BY R00001.DataInicial;
+
+--M200--
+SELECT 'M200' AS 'Registro', FORMAT(R0000.DataInicial, 'MM/yyyy') AS 'Competencia', FORMAT(scrm.ValorContribuicoesPeriodo, 'c', 'pt-br') AS 'Vl. Contrib Per', FORMAT(scrm.ValorCreditoDescontado, 'c', 'pt-br') AS 'Vl. Cred Desc', FORMAT(scrm.ValorCreditoDescontadoAnterior, 'c', 'pt-br') AS 'Vl. Cred Desc Ant', FORMAT(scrm.ValorContribuicoesDevida, 'c', 'pt-br') AS 'Vl. Contrib Devida', FORMAT(scrm.ValorRetidoNaoCumulativo, 'c', 'pt-br') AS 'Vl. Retido N Cum.', FORMAT(scrm.ValorOutrasDeducoesNaoCumulativo, 'c', 'pt-br') AS 'Vl. Outras Dedu. N Cum.', FORMAT(scrm.ValorContribuicaoNaoCumulativoRecolher, 'c', 'pt-br') AS 'Vl. Contrib N Cum. Rec.', FORMAT(scrm.ValorContribuicaoCumulativo, 'c', 'pt-br') AS 'Vl. Contrib Cum.', FORMAT(scrm.ValorRetidoCumulativo, 'c', 'pt-br') AS 'Vl. Retido Cum.', FORMAT(scrm.ValorOutrasDeducoesCumulativo, 'c', 'pt-br') AS 'Vl. Outras Dedu. Cum.', FORMAT(scrm.ValorContribuicaoCumulativoRecolher, 'c', 'pt-br') AS 'Vl. Contrib Cum. Rec.', FORMAT(scrm.ValorContribuicaoRecolher, 'c', 'pt-br') AS 'Vl. Contrib. Rec.' 
+FROM SpedContribuicoesRegistrosM200 scrm
+JOIN SpedContribuicoesRegistros0000 R0000 ON scrm.SpedContribuicoesRegistro0000Id = R0000.SpedContribuicoesRegistro0000Id
+JOIN Empresas e on e.empresaid = R0000.empresaId
+WHERE  (e.cnpj = '{empresa}' OR e.cnpj like '%{empresa}%')  AND R0000.DataInicial BETWEEN '{datainicio}' AND '{datafim}'
+ORDER BY R0000.DataInicial;
+
+--M230--
+SELECT 'M230' AS 'Registro', FORMAT(R0000.datainicial, 'MM/yyyy') AS 'Comp.',
+    dctcsc.Descricao AS 'Cód. Tipo Cred.',
+    scrm.Cnpj,
+    FORMAT(scrm.ValorVendas, 'c', 'pt-br') AS 'Vl. Vendas',
+    FORMAT(scrm.ValorNaoRecebido, 'c', 'pt-br') AS 'Vl. N Recebido',
+    FORMAT(scrm.ValorContribuicao, 'c', 'pt-br') AS 'Vl. Contrib',
+    FORMAT(scrm.ValorCredito, 'c', 'pt-br') AS 'Vl. Cred.'
+FROM SpedContribuicoesRegistrosM230 scrm
+JOIN DefCodigoTipoCreditoSpedContribuicoes dctcsc ON scrm.CodigoTipoCreditoSpedContribuicoesId = dctcsc.CodigoTipoCreditoSpedContribuicoesId
+JOIN SpedContribuicoesRegistrosM210 scrm1 ON scrm.SpedContribuicoesRegistroM210Id = scrm1.SpedContribuicoesRegistroM210Id
+JOIN SpedContribuicoesRegistrosM200 scrm2 ON scrm1.SpedContribuicoesRegistroM200Id = scrm2.SpedContribuicoesRegistroM200Id
+JOIN SpedContribuicoesRegistros0000 R0000 ON scrm2.SpedContribuicoesRegistro0000Id = R0000.SpedContribuicoesRegistro0000Id
+JOIN Empresas e on e.empresaid = R0000.empresaId
+WHERE  (e.cnpj = '{empresa}' OR e.cnpj like '%{empresa}%') 
+    AND R0000.DataInicial BETWEEN '{datainicio}' AND '{datafim}'
+ORDER BY R0000.DataInicial;
+
+--M600--
+
+SELECT 'M600' AS 'Registro', FORMAT(R0000.DataInicial, 'MM/yyyy') AS 'Competencia',
+    FORMAT(scrm.ValorContribuicaoNaoCumulativa, 'c', 'pt-br') AS 'Vl. Contrib Per',
+    FORMAT(scrm.ValorCreditoDescontado, 'c', 'pt-br') AS 'Vl. Cred Desc',
+    FORMAT(scrm.ValorCreditoDescontadoAnterior, 'c', 'pt-br') AS 'Vl. Cred Desc Ant',
+    FORMAT(scrm.ValorContribuicaoNaoCumulativaDevida, 'c', 'pt-br') AS 'Vl. Contrib Devida',
+    FORMAT(scrm.ValorRetidoNaoCumulativo, 'c', 'pt-br') AS 'Vl. Retido N Cum.',
+    FORMAT(scrm.ValorOutrasDeducoesNaoCumulativo, 'c', 'pt-br') AS 'Vl. Outras Dedu. N Cum.',
+    FORMAT(scrm.ValorContribuicaoNaoCumulativaRecolher, 'c', 'pt-br') AS 'Vl. Contrib N Cum. Rec.',
+    FORMAT(scrm.ValorContribuicaoCumulativa, 'c', 'pt-br') AS 'Vl. Contrib Cum.',
+    FORMAT(scrm.ValorRetidoCumulativo, 'c', 'pt-br') AS 'Vl. Retido Cum.',
+    FORMAT(scrm.ValorOutrasDeducoesCumulativo, 'c', 'pt-br') AS 'Vl. Outras Dedu. Cum.',
+    FORMAT(scrm.ValorContribuicaoCumulativaRecolher, 'c', 'pt-br') AS 'Vl. Contrib Cum. Rec.',
+    FORMAT(scrm.ValorTotalContribuicaoRecolher, 'c', 'pt-br') AS 'Vl. Contrib. Rec.'
+FROM SpedContribuicoesRegistrosM600 scrm
+JOIN SpedContribuicoesRegistros0000 R0000 ON scrm.SpedContribuicoesRegistro0000Id = R0000.SpedContribuicoesRegistro0000Id
+JOIN Empresas e on e.empresaid = R0000.empresaId
+WHERE  (e.cnpj = '{empresa}' OR e.cnpj like '%{empresa}%') 
+    AND R0000.DataInicial BETWEEN '{datainicio}' AND '{datafim}'
+ORDER BY R0000.DataInicial;
+
+--M605--
+
+SELECT 'M605' AS 'Registro', FORMAT(R0000.DataInicial, 'MM/yyyy') AS 'Competencia',
+    scrm.NumeroCampo,
+    scrm.CodigoReceita,
+    FORMAT(scrm.ValorDebito, 'c', 'pt-br') AS 'Vl. Debito'
+FROM SpedContribuicoesRegistrosM605 scrm
+JOIN SpedContribuicoesRegistrosM600 scrm1 ON scrm.SpedContribuicoesRegistroM600Id = scrm1.SpedContribuicoesRegistroM600Id
+JOIN SpedContribuicoesRegistros0000 R0000 ON scrm1.SpedContribuicoesRegistro0000Id = R0000.SpedContribuicoesRegistro0000Id
+JOIN Empresas e on e.empresaid = R0000.empresaId
+WHERE  (e.cnpj = '{empresa}' OR e.cnpj like '%{empresa}%') 
+    AND R0000.DataInicial BETWEEN '{datainicio}' AND '{datafim}'
+ORDER BY R0000.DataInicial;
+
+--M611--
+
+SELECT 'M611' AS 'Registro', FORMAT(R0000.DataInicial, 'MM/yyyy') AS 'Competencia',
+    ditscsc.Descricao AS 'IndicadorTipoSociedadeCooperativa',
+    FORMAT(scrm.ValorBaseCalculoContribuicaoAnterior, 'c', 'pt-br') AS 'Vl. BC Contrib Anterior',
+    FORMAT(scrm.ValorExclusaoCooperativas, 'c', 'pt-br') AS 'Vl. Exclu. Coop.',
+    FORMAT(scrm.ValorExclusaoEspecifica, 'c', 'pt-br') AS 'Vl. Exclu. Especifica',
+    FORMAT(scrm.ValorBaseCalculoAposExclusoes, 'c', 'pt-br') AS 'Vl. BC Após Exclu.'
+FROM SpedContribuicoesRegistrosM611 scrm
+JOIN DefIndicadorTipoSociedadeCooperativaSpedContribuicoes ditscsc ON scrm.IndicadorTipoSociedadeCooperativaSpedContribuicoesId = ditscsc.IndicadorTipoSociedadeCooperativaSpedContribuicoesId
+JOIN SpedContribuicoesRegistrosM610 scrm1 ON scrm.SpedContribuicoesRegistroM611Id = scrm1.SpedContribuicoesRegistroM610Id
+JOIN SpedContribuicoesRegistrosM600 scrm2 ON scrm1.SpedContribuicoesRegistroM600Id = scrm2.SpedContribuicoesRegistroM600Id
+JOIN SpedContribuicoesRegistros0000 R0000 ON scrm2.SpedContribuicoesRegistro0000Id = R0000.SpedContribuicoesRegistro0000Id
+JOIN Empresas e on e.empresaid = R0000.empresaId
+WHERE  (e.cnpj = '{empresa}' OR e.cnpj like '%{empresa}%') 
+    AND R0000.DataInicial BETWEEN '{datainicio}' AND '{datafim}'
+ORDER BY R0000.DataInicial;
+
+
+--M615--
+
+SELECT 'M615' AS 'Registro', FORMAT(R0000.DataInicial, 'MM/yyyy') AS 'Competencia',
+    ditasc.Descricao AS 'Ind. Aj.', dcabcc.Descricao AS 'Cód. Aj. BC',
+    FORMAT(scrm.ValorAjusteBaseCalculo, 'c', 'pt-br') AS 'Vl. Aj. BC',
+    scrm.NumeroProcesso,
+    scrm.DescricaoAjuste,
+    FORMAT(scrm.DataReferencia, 'MM/yyyy') AS 'Dt. Ref.',
+    scrm.CodigoConta,
+    scrm.Cnpj,
+    scrm.InformacaoComplementar
+FROM SpedContribuicoesRegistrosM615 scrm
+JOIN DefCodigoAjustesBaseCalculoContribuicoes dcabcc ON scrm.CodigoAjustesBaseCalculoContribuicoesId = dcabcc.CodigoAjustesBaseCalculoContribuicoesId
+JOIN DefIndicadorTipoAjusteSpedContribuicoes ditasc ON scrm.IndicadorTipoAjusteSpedContribuicoesId = ditasc.IndicadorTipoAjusteSpedContribuicoesId
+JOIN SpedContribuicoesRegistrosM610 scrm1 ON scrm.SpedContribuicoesRegistroM610Id = scrm1.SpedContribuicoesRegistroM610Id
+JOIN SpedContribuicoesRegistrosM600 scrm2 ON scrm1.SpedContribuicoesRegistroM600Id = scrm2.SpedContribuicoesRegistroM600Id
+JOIN SpedContribuicoesRegistros0000 R0000 ON scrm2.SpedContribuicoesRegistro0000Id = R0000.SpedContribuicoesRegistro0000Id
+JOIN Empresas e on e.empresaid = R0000.empresaId
+WHERE  (e.cnpj = '{empresa}' OR e.cnpj like '%{empresa}%') 
+    AND R0000.DataInicial BETWEEN '{datainicio}' AND '{datafim}'
+ORDER BY R0000.DataInicial;
+
+--M620--
+
+SELECT 'M620' AS 'Registro', FORMAT(R0000.DataInicial, 'MM/yyyy') AS 'Comp.',
+    ditasc.Descricao,
+    dcacc.Descricao,
+    scrm.ValorAjuste,
+    scrm.NumeroProcesso,
+    scrm.DescricaoAjuste,
+    FORMAT(scrm.DataReferencia, 'MM/yyyy') AS 'Dt. Ref.'
+FROM SpedContribuicoesRegistrosM620 scrm
+JOIN DefCodigoAjustesContribuicaoCreditos dcacc ON scrm.CodigoAjustesContribuicaoCreditosId = dcacc.CodigoAjustesContribuicaoCreditosId
+JOIN DefIndicadorTipoAjusteSpedContribuicoes ditasc ON scrm.IndicadorTipoAjusteSpedContribuicoesId = ditasc.IndicadorTipoAjusteSpedContribuicoesId
+JOIN SpedContribuicoesRegistrosM610 scrm1 ON scrm.SpedContribuicoesRegistroM610Id = scrm1.SpedContribuicoesRegistroM610Id
+JOIN SpedContribuicoesRegistrosM600 scrm2 ON scrm1.SpedContribuicoesRegistroM600Id = scrm2.SpedContribuicoesRegistroM600Id
+JOIN SpedContribuicoesRegistros0000 R0000 ON scrm2.SpedContribuicoesRegistro0000Id = R0000.SpedContribuicoesRegistro0000Id
+JOIN Empresas e on e.empresaid = R0000.empresaId
+WHERE  (e.cnpj = '{empresa}' OR e.cnpj like '%{empresa}%') 
+    AND R0000.DataInicial BETWEEN '{datainicio}' AND '{datafim}'
+ORDER BY R0000.DataInicial;
+
+--M630--
+SELECT 'M630' AS 'Registro',FORMAT(R0000.datainicial, 'MM/yyyy') AS 'Comp.'
+, dctcsc.Descricao AS 'Cód. Tipo Cred.'
+, scrm.Cnpj
+, format(scrm.ValorVendas		,'c','pt-br')as'Vl. Vendas'
+, format(scrm.ValorNaoRecebido	,'c','pt-br')as'Vl. N Recebido'
+, format(scrm.ValorContribuicao	,'c','pt-br')as'Vl. Contrib'
+, format(scrm.ValorCredito		,'c','pt-br')as'Vl. Cred.'
+FROM SpedContribuicoesRegistrosM630 scrm
+JOIN DefCodigoTipoCreditoSpedContribuicoes dctcsc ON scrm.CodigoTipoCreditoSpedContribuicoesId = dctcsc.CodigoTipoCreditoSpedContribuicoesId
+JOIN SpedContribuicoesRegistrosM610 scrm1 ON scrm.SpedContribuicoesRegistroM610Id = scrm1.SpedContribuicoesRegistroM610Id
+JOIN SpedContribuicoesRegistrosM600 scrm2 ON scrm1.SpedContribuicoesRegistroM600Id = scrm2.SpedContribuicoesRegistroM600Id
+JOIN SpedContribuicoesRegistros0000 R0000 ON scrm2.SpedContribuicoesRegistro0000Id = R0000.SpedContribuicoesRegistro0000Id
+JOIN Empresas e on e.empresaid = R0000.empresaId
+WHERE  (e.cnpj = '{empresa}' OR e.cnpj like '%{empresa}%')
+    AND R0000.DataInicial BETWEEN '{datainicio}' AND '{datafim}'
+ORDER BY R0000.DataInicial 
+
+--##
+
+--None

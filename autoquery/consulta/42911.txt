@@ -1,0 +1,22 @@
+
+--None
+
+--##
+
+--Rec. Revenda Itens Credito-- 
+
+SELECT e.RazaoSocial Empresa, e.Cnpj, e.Apelido, R0200.Ncm, R0200.Descricao Descricao, dtrr.Descricao AS TipoReclassificacao FROM ProdutosReclassificacaoRevenda prr
+JOIN SpedFiscalRegistrosC170 C170 ON prr.SpedFiscalRegistroC170Id = C170.SpedFiscalRegistroC170Id
+JOIN SpedFiscalRegistros0200 R0200 ON C170.SpedFiscalRegistro0200Id = R0200.SpedFiscalRegistro0200Id
+JOIN SpedFiscalRegistrosC100 C100 ON C170.SpedFiscalRegistroC100Id = C100.SpedFiscalRegistroC100Id
+JOIN SpedFiscalRegistros0000 R0000 ON C100.SpedFiscalRegistro0000Id = R0000.SpedFiscalRegistro0000Id
+JOIN empresas e ON R0000.EmpresaId = e.EmpresaId
+JOIN DefTipoReclassificacaoRevenda dtrr ON prr.TipoReclassificacaoRevendaId = dtrr.TipoReclassificacaoRevendaId
+WHERE prr.TipoReclassificacaoRevendaId = 1 AND R0000.DataInicial BETWEEN '{datainicio}' AND '{datafim}'   
+AND (e.cnpj = '{empresa}' OR e.cnpj like '%{empresa}%')
+
+--##
+
+--None
+
+ 

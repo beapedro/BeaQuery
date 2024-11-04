@@ -1,0 +1,79 @@
+
+--None
+
+--##
+
+--43357--
+
+SELECT DISTINCT sfrc1.ChaveAcesso, FORMAT(sfr.DataInicial, 'MM/yyyy') AS 'Comp', e.Apelido, 'SPED x XML Entrada Individual'as 'Tipo'  FROM SpedFiscalRegistrosC170 sfrc
+JOIN SpedFiscalRegistrosC100 sfrc1 ON sfrc.SpedFiscalRegistroC100Id = sfrc1.SpedFiscalRegistroC100Id
+JOIN SpedFiscalRegistros0000 sfr ON sfrc1.SpedFiscalRegistro0000Id = sfr.SpedFiscalRegistro0000Id
+JOIN Empresas e ON sfr.EmpresaId = e.EmpresaId
+JOIN NotasFiscaisImportacoesXml nfix ON e.EmpresaId = nfix.EmpresaId AND sfrc1.ChaveAcesso = nfix.ChaveAcesso
+LEFT JOIN AssociacoesSpedFiscalXmlEntradaIndividual asfxei ON sfrc.SpedFiscalRegistroC170Id = asfxei.SpedFiscalRegistroC170Id
+WHERE nfix.ModeloNotaFiscalId <> 19 and sfr.DataInicial BETWEEN '{datainicio}' AND '{datafim}' AND asfxei.AssociacaoSpedFiscalXmlEntradaIndividualId IS NULL
+AND  (e.cnpj = '{empresa}' OR e.cnpj like '%{empresa}%') 
+AND sfrc1.TipoOperacaoNotaFiscalId = 1 AND sfrc1.IndicadorEmitenteDocumentoFiscalId = 2
+AND sfrc1.ChaveAcesso NOT IN (SELECT sfrc2.ChaveAcesso FROM SpedFiscalRegistrosC100 sfrc2 WHERE sfrc2.ChaveAcesso=sfrc1.ChaveAcesso GROUP BY sfrc2.ChaveAcesso HAVING count (sfrc2.ChaveAcesso)>1)
+union
+SELECT DISTINCT scrc2.ChaveAcesso, FORMAT(scr.DataInicial, 'MM/yyyy') AS 'Comp', e.Apelido, 'SPED x XML Saída Individual'as 'Tipo' FROM SpedContribuicoesRegistrosC170 scrc
+JOIN SpedContribuicoesRegistrosC100 scrc2 ON scrc.SpedContribuicoesRegistroC100Id = scrc2.SpedContribuicoesRegistroC100Id
+JOIN SpedContribuicoesRegistrosC010 scrc3 ON scrc2.SpedContribuicoesRegistroC010Id = scrc3.SpedContribuicoesRegistroC010Id
+JOIN SpedContribuicoesRegistros0000 scr ON scrc3.SpedContribuicoesRegistro0000Id = scr.SpedContribuicoesRegistro0000Id
+JOIN Empresas e ON scrc3.Cnpj = e.Cnpj
+JOIN NotasFiscaisImportacoesXml nfix ON e.EmpresaId = nfix.EmpresaId AND scrc2.ChaveAcesso = nfix.ChaveAcesso
+LEFT JOIN AssociacoesSpedContribuicoesXmlSaidaIndividual ascxsi ON scrc.SpedContribuicoesRegistroC170Id = ascxsi.SpedContribuicoesRegistroC170Id
+WHERE nfix.ModeloNotaFiscalId <> 19 and scr.DataInicial BETWEEN '{datainicio}' AND '{datafim}' AND ascxsi.AssociacaoSpedContribuicoesXmlSaidaIndividualId IS NULL
+AND  (e.cnpj = '{empresa}' OR e.cnpj like '%{empresa}%') 
+AND scrc2.TipoOperacaoNotaFiscalId = 2
+AND scrc2.ChaveAcesso NOT IN (SELECT scrc3.ChaveAcesso FROM SpedContribuicoesRegistrosC100 scrc3 WHERE scrc3.ChaveAcesso=scrc2.ChaveAcesso GROUP BY scrc3.ChaveAcesso HAVING count (scrc3.ChaveAcesso)>1)
+union
+SELECT DISTINCT sfrc1.ChaveAcesso, FORMAT(sfr.DataInicial, 'MM/yyyy') AS 'Comp', e.Apelido, 'SPED x SPED Entrada Individual'as 'Tipo' FROM SpedFiscalRegistrosC170 sfrc
+JOIN SpedFiscalRegistrosC100 sfrc1 ON sfrc.SpedFiscalRegistroC100Id = sfrc1.SpedFiscalRegistroC100Id
+JOIN SpedFiscalRegistros0000 sfr ON sfrc1.SpedFiscalRegistro0000Id = sfr.SpedFiscalRegistro0000Id
+JOIN Empresas e ON sfr.EmpresaId = e.EmpresaId
+JOIN SpedContribuicoesRegistros0000 scr ON (e.EmpresaId = scr.EmpresaId OR e.MatrizId = scr.EmpresaId) AND sfr.DataInicial = scr.DataInicial
+JOIN SpedContribuicoesRegistrosC010 scrc ON e.Cnpj = scrc.Cnpj AND scr.SpedContribuicoesRegistro0000Id = scrc.SpedContribuicoesRegistro0000Id
+JOIN SpedContribuicoesRegistrosC100 scrc1 ON scrc.SpedContribuicoesRegistroC010Id = scrc1.SpedContribuicoesRegistroC010Id AND sfrc1.ChaveAcesso = scrc1.ChaveAcesso
+LEFT JOIN AssociacoesSpedFiscalSpedContribuicoesEntradaIndividual asfscei ON sfrc.SpedFiscalRegistroC170Id = asfscei.SpedFiscalRegistroC170Id
+WHERE sfrc1.ModeloNotaFiscalId <> 19 AND sfr.DataInicial BETWEEN '{datainicio}' AND '{datafim}' AND asfscei.AssociacaoSpedFiscalSpedContribuicoesEntradaIndividualId IS NULL AND sfrc1.TipoOperacaoNotaFiscalId = 1 AND scrc1.ChaveAcesso <> ''
+AND  (e.cnpj = '{empresa}' OR e.cnpj like '%{empresa}%') 
+AND sfrc1.ChaveAcesso NOT IN (SELECT sfrc2.ChaveAcesso FROM SpedFiscalRegistrosC100 sfrc2 WHERE sfrc2.ChaveAcesso=sfrc1.ChaveAcesso GROUP BY sfrc2.ChaveAcesso HAVING count (sfrc2.ChaveAcesso)>1)
+AND sfrc1.ChaveAcesso NOT IN (SELECT scrc2.ChaveAcesso FROM SpedContribuicoesRegistrosC100 scrc2 WHERE scrc2.ChaveAcesso=sfrc1.ChaveAcesso GROUP BY scrc2.ChaveAcesso HAVING count (scrc2.ChaveAcesso)>1)
+union
+SELECT distinct Xml.ChaveAcesso, FORMAT(R0000.DataInicial, 'MM/yyyy') AS 'Comp.', e.Apelido, 'SPED x XML Saída Consolidado'as 'Tipo'
+FROM SpedContribuicoesRegistros0000 AS R0000
+JOIN SpedContribuicoesRegistrosC010 AS C010 ON R0000.SpedContribuicoesRegistro0000Id = C010.SpedContribuicoesRegistro0000Id
+JOIN SpedContribuicoesRegistrosC180 AS C180 ON C010.SpedContribuicoesRegistroC010Id = C180.SpedContribuicoesRegistroC010Id
+JOIN SpedContribuicoesRegistrosC181 AS C181 ON C180.SpedContribuicoesRegistroC180Id = C181.SpedContribuicoesRegistroC180Id
+JOIN SpedContribuicoesRegistros0200 AS R0200 ON C180.SpedContribuicoesRegistro0200Id = R0200.SpedContribuicoesRegistro0200Id
+JOIN Empresas AS e ON C010.Cnpj = e.Cnpj
+JOIN NotasFiscaisImportacoesXml AS Xml ON e.EmpresaId = Xml.EmpresaId and YEAR(Xml.DataEmissao) = YEAR(R0000.DataInicial) AND MONTH(Xml.DataEmissao) = MONTH(R0000.DataInicial)
+JOIN EmitentesImportacoesXml eix ON Xml.EmitenteImportacaoXmlId = eix.EmitenteImportacaoXmlId
+JOIN NotaFiscalItensImportacoesXml AS Ixml ON Xml.NotaFiscalImportacaoXmlId = Ixml.NotaFiscalImportacaoXmlId AND R0200.Codigo = Ixml.CodigoProduto AND C181.Cfop = Ixml.Cfop
+LEFT JOIN AssociacoesSpedContribuicoesXmlSaidaConsolidado ass ON Ixml.NotaFiscalItemImportacaoXmlId = ass.NotaFiscalItemImportacaoXmlId
+WHERE Xml.ModeloNotaFiscalId <> 19 AND Xml.Cancelada=0 and R0000.DataInicial BETWEEN '{datainicio}' AND '{datafim}' AND C010.IndicadorApuracaoEscrituracaoSpedContribuicoesId = 1
+AND  (e.cnpj = '{empresa}' OR e.cnpj like '%{empresa}%') 
+AND NOT EXISTS (SELECT 1 FROM AssociacoesSpedContribuicoesXmlSaidaConsolidado ass WHERE Ixml.NotaFiscalItemImportacaoXmlId = ass.NotaFiscalItemImportacaoXmlId)
+AND ((Xml.TipoOperacaoNotaFiscalId = 2 AND eix.Cnpj=e.Cnpj) OR (Xml.TipoOperacaoNotaFiscalId = 1 AND eix.Cnpj <> e.Cnpj))
+union
+SELECT DISTINCT sfrc1.ChaveAcesso, FORMAT(sfr.DataInicial, 'MM/yyyy') AS 'Comp', e.Apelido, 'SPED x SPED Entrada Consolidado' as 'Tipo'  FROM SpedFiscalRegistrosC170 sfrc
+JOIN SpedFiscalRegistros0200 sfr2 ON sfrc.SpedFiscalRegistro0200Id = sfr2.SpedFiscalRegistro0200Id
+JOIN SpedFiscalRegistrosC100 sfrc1 ON sfrc.SpedFiscalRegistroC100Id = sfrc1.SpedFiscalRegistroC100Id
+JOIN SpedFiscalRegistros0000 sfr ON sfrc1.SpedFiscalRegistro0000Id = sfr.SpedFiscalRegistro0000Id
+JOIN SpedFiscalRegistros0150 sfr1 ON sfrc1.SpedFiscalRegistro0150Id = sfr1.SpedFiscalRegistro0150Id
+JOIN Empresas e ON sfr.EmpresaId = e.EmpresaId
+JOIN SpedContribuicoesRegistros0000 scr3 ON (e.EmpresaId = scr3.EmpresaId OR scr3.EmpresaId=e.MatrizId) AND sfr.DataInicial = scr3.DataInicial
+JOIN SpedContribuicoesRegistrosC010 scrc ON scr3.SpedContribuicoesRegistro0000Id = scrc.SpedContribuicoesRegistro0000Id AND sfr.Cnpj = scrc.Cnpj
+JOIN SpedContribuicoesRegistros0140 scr ON scrc.SpedContribuicoesRegistro0000Id = scr.SpedContribuicoesRegistro0000Id AND sfr.Cnpj=scrc.Cnpj 
+JOIN SpedContribuicoesRegistros0200 scr1 ON scr.SpedContribuicoesRegistro0140Id = scr1.SpedContribuicoesRegistro0140Id AND sfr2.Codigo = scr1.Codigo
+JOIN SpedContribuicoesRegistrosC190 scrc1 ON scrc.SpedContribuicoesRegistroC010Id = scrc1.SpedContribuicoesRegistroC010Id AND scr1.SpedContribuicoesRegistro0200Id = scrc1.SpedContribuicoesRegistro0200Id
+JOIN SpedContribuicoesRegistrosC191 scrc2 ON scrc1.SpedContribuicoesRegistroC190Id = scrc2.SpedContribuicoesRegistroC190Id AND scrc2.CnpjCpfParticipante = sfr1.Cnpj
+LEFT JOIN AssociacoesSpedFiscalSpedContribuicoesEntradaConsolidado asfscei ON sfrc.SpedFiscalRegistroC170Id = asfscei.SpedFiscalRegistroC170Id
+WHERE sfrc1.ModeloNotaFiscalId <>19 and sfr.DataInicial BETWEEN '{datainicio}' AND '{datafim}' AND asfscei.AssociacaoSpedFiscalSpedContribuicoesEntradaConsolidadoId IS NULL AND sfrc1.TipoOperacaoNotaFiscalId = 1 AND sfrc1.ChaveAcesso <> '' AND scrc.IndicadorApuracaoEscrituracaoSpedContribuicoesId = 1
+AND  (e.cnpj = '{empresa}' OR e.cnpj like '%{empresa}%') 
+AND sfrc1.ChaveAcesso NOT IN (SELECT sfrc2.ChaveAcesso FROM SpedFiscalRegistrosC100 sfrc2 WHERE sfrc2.ChaveAcesso=sfrc1.ChaveAcesso GROUP BY sfrc2.ChaveAcesso HAVING count (sfrc2.ChaveAcesso)>1)
+
+--##
+
+--None

@@ -1,0 +1,95 @@
+{% extends "autoquerytemplate.html" %}
+{% block conteudo %}
+
+<form class="row g-3" action="{{ url_for('download_query') }}" method="post" enctype="multipart/form-data" >
+  <div class="col-md-3">
+    <label for="database" class="form-label">Ambiente</label>
+    <select data-trigger id="database" name="database"  value= "{{ database }}" class="form-select" required>
+      <option value="AuditorTeste">Auditor Teste</option>
+      <option value="ClimaRio">Clima Rio</option>
+      <option value="Conformidade">Conformidade</option>
+      <option value="Coplan">Coplan</option>
+      <option value="Embelleze">Embelleze</option>
+      <option value="Fiscoplan">Fiscoplan</option>
+      <option value="Fiscoplan23">Fiscoplan23</option>
+      <option value="Fiscoplan24">Fiscoplan24</option>
+      <option value="Kraft">Kraft</option>
+      <option value="Kraft23">Kraft23</option>
+      <option value="Kraft24">Kraft24</option>
+      <option value="Maringa">Maringa</option>
+      <option value="Supermais">Super Mais</option>
+      <option value="TopBirra">Top Birra</option>
+
+    </select>
+  </div>  
+  
+  <div class="col-md-6">
+    <label for="empresa" class="form-label">CNPJ da Empresa</label>
+    <select data-trigger id="cnpj" name="cnpj" value = " {{empresa}}" class="form-select" required>
+      {% for empresa in empresas %} 
+       <option value = "{{ empresa.Cnpj }}"> {{empresa.Empresas}} </option>
+      {% endfor %}
+    </select>  
+   </div>
+  
+
+  <div class="col-md-3">
+    <label for="consulta" class="form-label">Task</label>
+    <select data-trigger id="consulta" name="consulta"  value= "{{ consulta }}" class="form-select" required>
+     {% for consulta in consultas %} 
+      <option value="{{ consulta.Task }}">{{ consulta.Task }}</option>
+     {% endfor %}
+    </select> 
+  </div>
+  <div class="col-md-6">
+    <label for="datainicio" class="form-label">Data Início</label>
+    <input type="date" class="form-control" id="datainicio" value= "{{ datainicio }}" name="datainicio" required >
+  </div>
+  <div class="col-md-6">
+    <label for="datafim" class="form-label">Data Fim</label>
+    <input type="date" class="form-control" id="datafim" name="datafim" value= "{{ datafim }}" required>
+  </div>
+  <div class="form-check form-switch col-md-3">
+    <label class="form-label" for="multiquery">Incluir filiais</label>   
+  </div>  
+
+  <div class="form-check form-switch col-md-3">
+    <input class="form-check-input" type="checkbox" role="switch" id="filiais" name="filiais" onch>
+  </div>  
+ 
+  <div class="col-12">
+    <button type="submit" class="btn btn-primary">Solicitar consulta</button>
+  </div>
+</form>
+
+<script>
+  document.getElementById('empresa').addEventListener('input', function(e) {
+    var value = e.target.value;
+    var rawValue = value.replace(/\D/g, ''); // Remove tudo que não é número
+    
+    // Verifica se o CNPJ tem 15 dígitos e se o primeiro dígito é '0'
+    if (rawValue.length === 15 && rawValue.startsWith('0')) {
+      // Verifica se, ao remover o '0', o restante é um CNPJ válido
+      var potentialCNPJ = rawValue.substring(1);
+      if (validaCNPJ(potentialCNPJ)) rawValue = potentialCNPJ;
+    }
+    
+    var cnpjPattern = rawValue
+            .replace(/^(\d{2})(\d)/, '$1.$2') // Adiciona ponto após o segundo dígito
+            .replace(/^(\d{2})\.(\d{3})(\d)/, '$1.$2.$3') // Adiciona ponto após o quinto dígito
+            .replace(/\.(\d{3})(\d)/, '.$1/$2') // Adiciona barra após o oitavo dígito
+            .replace(/(\d{4})(\d)/, '$1-$2') // Adiciona traço após o décimo segundo dígito
+            .replace(/(-\d{2})\d+?$/, '$1'); // Impede a entrada de mais de 14 dígitos
+    e.target.value = cnpjPattern;
+  });
+</script>
+<script>
+  function setFiliaisValue() {
+    const checkbox = document.getElementById("filiais");
+    checkbox.value = checkbox.checked ? "True" : "False";
+  }
+</script>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.2/js/bootstrap.min.js"></script>
+<script src="//cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.6.3/js/bootstrap-select.min.js"></script>
+{% endblock %}

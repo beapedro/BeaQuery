@@ -1,0 +1,70 @@
+
+--None
+
+--## 
+
+--M100 ANTIGO--
+
+SELECT 'M100 ANTIGO' AS 'Registro', FORMAT(DataInicial, 'MM/yyyy') AS 'Comp.', dctcsc.Codigo, FORMAT(scrm.ValorCreditoDisponivel, 'c', 'pt-br') AS 'Vl. Cred. Disponivel', FORMAT(scrm.ValorCreditoDisponivelDescontado, 'c', 'pt-br') AS 'Cred. Descontado', FORMAT(scrm.SaldoCredito, 'c', 'pt-br') AS 'Saldo Credito'
+FROM SpedContribuicoesRegistrosM100 scrm
+	 JOIN DefCodigoTipoCreditoSpedContribuicoes dctcsc ON scrm.CodigoTipoCreditoSpedContribuicoesId = dctcsc.CodigoTipoCreditoSpedContribuicoesId
+	 JOIN SpedContribuicoesRegistros0000 R0000 ON scrm.SpedContribuicoesRegistro0000Id = R0000.SpedContribuicoesRegistro0000Id
+	 JOIN Empresas e ON R0000.EmpresaId = e.EmpresaId
+WHERE  (e.cnpj = '{empresa}' OR e.cnpj like '%{empresa}%') 
+ORDER BY R0000.DataInicial, dctcsc.Codigo;
+
+--M200 ANTIGO--
+ 
+
+SELECT 'M200 ANTIGO' AS 'Registro', FORMAT(DataInicial, 'MM/yyyy') AS 'Comp.', FORMAT(scrm.ValorContribuicoesPeriodo, 'c', 'pt-br') AS 'Vl. Total Contrib.', FORMAT(scrm.ValorCreditoDescontado, 'c', 'pt-br') AS 'Cred. Descontado', FORMAT(scrm.ValorCreditoDescontadoAnterior, 'c', 'pt-br') AS 'Cred. Desc. Anterior'
+FROM SpedContribuicoesRegistrosM200 scrm
+	 JOIN SpedContribuicoesRegistros0000 R0000 ON scrm.SpedContribuicoesRegistro0000Id = R0000.SpedContribuicoesRegistro0000Id
+	 JOIN Empresas e ON R0000.EmpresaId = e.EmpresaId
+WHERE  (e.cnpj = '{empresa}' OR e.cnpj like '%{empresa}%') 
+ORDER BY R0000.DataInicial;
+
+--M500 ANTIGO--
+
+ 
+
+SELECT 'M500 ANTIGO' AS 'Registro', FORMAT(DataInicial, 'MM/yyyy') AS 'Comp.', dctcsc.Codigo, FORMAT(scrm.ValorCreditoDisponivel, 'c', 'pt-br') AS 'Vl. Cred. Disponivel', FORMAT(scrm.ValorCreditoDescontado, 'c', 'pt-br') AS 'Cred. Descontado', FORMAT(scrm.SaldoCreditos, 'c', 'pt-br') AS 'Saldo Credito'
+FROM SpedContribuicoesRegistrosM500 scrm
+	 JOIN DefCodigoTipoCreditoSpedContribuicoes dctcsc ON scrm.CodigoTipoCreditoSpedContribuicoesId = dctcsc.CodigoTipoCreditoSpedContribuicoesId
+	 JOIN SpedContribuicoesRegistros0000 R0000 ON scrm.SpedContribuicoesRegistro0000Id = R0000.SpedContribuicoesRegistro0000Id
+	 JOIN Empresas e ON R0000.EmpresaId = e.EmpresaId
+WHERE  (e.cnpj = '{empresa}' OR e.cnpj like '%{empresa}%') 
+ORDER BY R0000.DataInicial, dctcsc.Codigo;
+
+--M600 ANTIGO--
+ 
+
+SELECT 'M600 ANTIGO' AS 'Registro', FORMAT(DataInicial, 'MM/yyyy') AS 'Comp.', FORMAT(scrm.ValorContribuicaoNaoCumulativa, 'c', 'pt-br') AS 'Vl. Total Contrib.', FORMAT(scrm.ValorCreditoDescontado, 'c', 'pt-br') AS 'Cred. Descontado', FORMAT(scrm.ValorCreditoDescontadoAnterior, 'c', 'pt-br') AS 'Cred. Desc. Anterior'
+FROM SpedContribuicoesRegistrosM600 scrm
+	 JOIN SpedContribuicoesRegistros0000 R0000 ON scrm.SpedContribuicoesRegistro0000Id = R0000.SpedContribuicoesRegistro0000Id
+	 JOIN Empresas e ON R0000.EmpresaId = e.EmpresaId
+WHERE  (e.cnpj = '{empresa}' OR e.cnpj like '%{empresa}%') 
+ORDER BY R0000.DataInicial;
+
+--1100 ANTIGO--
+ 
+SELECT '1100 ANTIGO' AS 'Registro', FORMAT(DataInicial, 'MM/yyyy') AS 'Comp. SPED', FORMAT(scr.PeriodoApuracao, 'MM/yyyy') AS 'Periodo Apur.', dctcsc.Codigo, FORMAT(scr.ValorCreditoApurado, 'c', 'pt-br') AS 'Vl. Cred Apur', FORMAT(scr.ValorCreditoDescontoAnterior, 'c', 'pt-br') AS 'Vl. Cred. Desc. Anterior', FORMAT(scr.ValorCreditoDescontadoAtual, 'c', 'pt-br') AS 'Vl. Cred. Desc. Atual', FORMAT(scr.SaldoCreditoApuracaoFuturo, 'c', 'pt-br') AS 'Saldo Per. Futuro'
+FROM SpedContribuicoesRegistros1100 scr
+	 JOIN DefCodigoTipoCreditoSpedContribuicoes dctcsc ON scr.CodigoTipoCreditoSpedContribuicoesId = dctcsc.CodigoTipoCreditoSpedContribuicoesId
+	 JOIN SpedContribuicoesRegistros0000 R0000 ON scr.SpedContribuicoesRegistro0000Id = R0000.SpedContribuicoesRegistro0000Id
+	 JOIN Empresas e ON R0000.EmpresaId = e.EmpresaId
+WHERE  (e.cnpj = '{empresa}' OR e.cnpj like '%{empresa}%') 
+ORDER BY R0000.DataInicial, scr.PeriodoApuracao, dctcsc.Codigo;
+
+--1500 ANTIGO--
+ 
+SELECT '1500 ANTIGO' AS 'Registro', FORMAT(DataInicial, 'MM/yyyy') AS 'Comp. SPED', FORMAT(scr.PeriodoApuracao, 'MM/yyyy') AS 'Periodo Apur.', dctcsc.Codigo, FORMAT(scr.ValorCreditoApurado, 'c', 'pt-br') AS 'Vl. Cred Apur', FORMAT(scr.ValorCreditoDescontoAnterior, 'c', 'pt-br') AS 'Vl. Cred. Desc. Anterior', FORMAT(scr.ValorCreditoDescontadoAtual, 'c', 'pt-br') AS 'Vl. Cred. Desc. Atual', FORMAT(scr.SaldoCreditoApuracaoFuturo, 'c', 'pt-br') AS 'Saldo Per. Futuro'
+FROM SpedContribuicoesRegistros1500 scr
+	 JOIN DefCodigoTipoCreditoSpedContribuicoes dctcsc ON scr.CodigoTipoCreditoSpedContribuicoesId = dctcsc.CodigoTipoCreditoSpedContribuicoesId
+	 JOIN SpedContribuicoesRegistros0000 R0000 ON scr.SpedContribuicoesRegistro0000Id = R0000.SpedContribuicoesRegistro0000Id
+	 JOIN Empresas e ON R0000.EmpresaId = e.EmpresaId
+WHERE  (e.cnpj = '{empresa}' OR e.cnpj like '%{empresa}%') 
+ORDER BY R0000.DataInicial, scr.PeriodoApuracao, dctcsc.Codigo;
+
+
+--##
+--None

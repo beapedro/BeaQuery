@@ -1,0 +1,69 @@
+
+--None
+--##
+
+--1100--
+SELECT 
+  FoRMAT(DataInicial, 'MM/yyyy') 'Competencia'
+, dctcsc.Codigo 'Codigo Tipo Credito'
+, dctcsc.Descricao 'Descricao Tipo Credito'
+, diocsc.Codigo 'Codigo Indicador origem Credito'
+, diocsc.Descricao 'Descricao Indicador origem Credito'
+, FoRMAT(scr.PeriodoApuracao, 'MM/yyyy') 'Periodo de Apuracao'
+, scr.CNPJ
+, FoRMAT(ISNULL(scr.ValorCreditoApurado,0),'c','pt-br') 'Credito Apurado'
+, FoRMAT(ISNULL(scr.ValorCreditoExtemporaneo,0),'c','pt-br') 'Credito Extemporaneo'
+, FoRMAT(ISNULL(scr.ValorTotalCreditoApurado,0),'c','pt-br') 'Credito Apurado'
+, FoRMAT(ISNULL(scr.ValorCreditoDescontoAnterior,0),'c','pt-br') 'Credito Desconto Anterior'
+, FoRMAT(ISNULL(scr.ValorCreditoRessarcimentoAnterior,0),'c','pt-br') 'Credito Ressarcimento Anterior'
+, FoRMAT(ISNULL(scr.ValorCreditoDeclaracaoAnterior,0),'c','pt-br') 'Credito Declaracao Anterior'
+, FoRMAT(ISNULL(scr.SaldoCreditoDisponivel,0),'c','pt-br') 'Saldo Credito Disponivel'
+, FoRMAT(ISNULL(scr.ValorCreditoDescontadoAtual,0),'c','pt-br') 'Credito Descontado Atual'
+, FoRMAT(ISNULL(scr.ValorCreditoRessarcimentoAtual,0),'c','pt-br') 'Credito Ressarcimento Atual'
+, FoRMAT(ISNULL(scr.ValorCreditoDeclaracaoAtual,0),'c','pt-br') 'Credito Declaracao Atual'
+, FoRMAT(ISNULL(scr.ValorCreditoTransferido,0),'c','pt-br') 'Credito Transferido'
+, FoRMAT(ISNULL(scr.ValorCreditoUtilizado,0),'c','pt-br') 'Credito Utilizado'
+, FoRMAT(ISNULL(scr.SaldoCreditoApuracaoFuturo,0),'c','pt-br') 'Saldo Credito Apuracao Futuro'
+FRoM SpedContribuicoesRegistros1100 AS scr
+LEFT JoIN DefIndicadororigemCreditoSpedContribuicoes AS diocsc oN scr.IndicadororigemCreditoSpedContribuicoesId = diocsc.IndicadororigemCreditoSpedContribuicoesId
+LEFT JoIN DefCodigoTipoCreditoSpedContribuicoes AS dctcsc oN scr.CodigoTipoCreditoSpedContribuicoesId = dctcsc.CodigoTipoCreditoSpedContribuicoesId
+LEFT JoIN SpedContribuicoesRegistros0000 AS R0000 oN scr.SpedContribuicoesRegistro0000Id = R0000.SpedContribuicoesRegistro0000Id
+JoIN Empresas e oN R0000.EmpresaId = e.EmpresaId
+WHERE R0000.DataInicial BETWEEN '{datainicio}' AND '{datafim}'
+AND (e.cnpj = '{empresa}' OR e.cnpj like '%{empresa}%')
+ORDER BY R0000.DataInicial;
+
+--1500--
+SELECT 
+  FoRMAT(DataInicial, 'MM/yyyy') 'Competencia'
+, dctcsc.Codigo 'Codigo Tipo Credito'
+, dctcsc.Descricao 'Descricao Tipo Credito'
+, diocsc.Codigo 'Codigo Indicador origem Credito'
+, diocsc.Descricao 'Descricao Indicador origem Credito'
+, FoRMAT(scr.PeriodoApuracao, 'MM/yyyy') 'Periodo de Apuracao'
+, scr.CNPJ
+, FoRMAT(ISNULL(scr.ValorCreditoApurado,0),'c','pt-br') 'Credito Apurado'
+, FoRMAT(ISNULL(scr.ValorCreditoExtemporaneo,0),'c','pt-br') 'Credito Extemporaneo'
+, FoRMAT(ISNULL(scr.ValorTotalCreditoApurado,0),'c','pt-br') 'Credito Apurado'
+, FoRMAT(ISNULL(scr.ValorCreditoDescontoAnterior,0),'c','pt-br') 'Credito Desconto Anterior'
+, FoRMAT(ISNULL(scr.ValorCreditoRessarcimentoAnterior,0),'c','pt-br') 'Credito Ressarcimento Anterior'
+, FoRMAT(ISNULL(scr.ValorCreditoDeclaracaoAnterior,0),'c','pt-br') 'Credito Declaracao Anterior'
+, FoRMAT(ISNULL(scr.SaldoCreditoDisponivel,0),'c','pt-br') 'Saldo Credito Disponivel'
+, FoRMAT(ISNULL(scr.ValorCreditoDescontadoAtual,0),'c','pt-br') 'Credito Descontado Atual'
+, FoRMAT(ISNULL(scr.ValorCreditoRessarcimentoAtual,0),'c','pt-br') 'Credito Ressarcimento Atual'
+, FoRMAT(ISNULL(scr.ValorCreditoDeclaracaoAtual,0),'c','pt-br') 'Credito Declaracao Atual'
+, FoRMAT(ISNULL(scr.ValorCreditoTransferido,0),'c','pt-br') 'Credito Transferido'
+, FoRMAT(ISNULL(scr.ValorCreditoUtilizado,0),'c','pt-br') 'Credito Utilizado'
+, FoRMAT(ISNULL(scr.SaldoCreditoApuracaoFuturo,0),'c','pt-br') 'Saldo Credito Apuracao Futuro'
+FRoM SpedContribuicoesRegistros1500 AS scr
+JoIN DefIndicadororigemCreditoSpedContribuicoes AS diocsc oN scr.IndicadororigemCreditoSpedContribuicoesId = diocsc.IndicadororigemCreditoSpedContribuicoesId
+JoIN DefCodigoTipoCreditoSpedContribuicoes AS dctcsc oN scr.CodigoTipoCreditoSpedContribuicoesId = dctcsc.CodigoTipoCreditoSpedContribuicoesId
+JoIN SpedContribuicoesRegistros0000 AS R0000 oN scr.SpedContribuicoesRegistro0000Id = R0000.SpedContribuicoesRegistro0000Id
+JoIN Empresas e oN R0000.EmpresaId = e.EmpresaId
+WHERE R0000.DataInicial BETWEEN '{datainicio}' AND '{datafim}'
+AND(e.cnpj = '{empresa}' OR e.cnpj like '%{empresa}%')
+oRDER BY R0000.DataInicial
+
+--##
+
+--None
